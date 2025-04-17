@@ -7,7 +7,7 @@ This repository provides a **one-click Docker setup** for running **DeepSeek AI*
 
 ## 📦 What's Inside?
 - **Docker Compose File (`docker-compose.yml`)** → Automates deployment.
-- **Prebuilt Docker Image** → Uses `byron758/woohengine-deepseek:1.0`.
+- **Prebuilt Docker Image** → Uses `byron758/woohengine-deepseek:1.2`.
 - **Apache Web Server** → Serves the DeepSeek AI frontend.
 - **Ollama AI Model** → Runs DeepSeek's **1.5B parameter model**.
 - **🌍 Interactive Frontend Interface** → A simple web-based UI for chatting with DeepSeek.
@@ -57,7 +57,7 @@ This setup includes a simple web-based chat interface for interacting with DeepS
 **Access the UI**
 Once the container is running, open:
 ```
-http://localhost
+http://<your-server-ip>:8088
 ```
 
 **Features**
@@ -68,9 +68,9 @@ http://localhost
 ---
 
 🔍 **How It Works**
-1. Pulls the `byron758/woohengine-deepseek:1.0` image (which includes Apache & Ollama).
-2. Starts DeepSeek AI on `http://localhost:80`.
-3. Exposes the DeepSeek API at `http://localhost:11434/api/generate`.
+1. Pulls the `byron758/woohengine-deepseek:1.2` image (which includes Apache & Ollama).
+2. Starts DeepSeek AI on `http://<your-server-ip>:8088`.
+3. Exposes the DeepSeek API at `http://<your-server-ip>:11434/api/generate`.
 4. Hosts a Web UI → Chat directly with DeepSeek from your browser.
 
 ---
@@ -78,7 +78,7 @@ http://localhost
 🌐 **Accessing the DeepSeek API**
 Once running, you can test the API using curl:
 ```sh
-curl -X POST http://localhost:11434/api/generate -H "Content-Type: application/json" -d '{
+curl -X POST http://<your-server-ip>:11434/api/generate -H "Content-Type: application/json" -d '{
     "model": "deepseek-r1:1.5b",
     "prompt": "What is DeepSeek AI?"
 }'

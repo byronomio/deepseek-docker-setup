@@ -1,11 +1,11 @@
 services:
   deepseek:
-    image: byron758/woohengine-deepseek:1.1
+    image: byron758/woohengine-deepseek:1.2
     container_name: deepseek-container
     restart: unless-stopped
     ports:
-      - "80:80"        # Apache Web Server
-      - "11434:11434"  # Ollama API
+      - "8088:80"        # Apache Web Server
+      - "11434:11434"    # Ollama API
     environment:
       - DEBIAN_FRONTEND=noninteractive
     networks:

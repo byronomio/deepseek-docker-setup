@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek AI - Interactive API</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .typewriter::after {
+            content: "|";
+            display: inline-block;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .gradient-border {
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #6a11cb, #2575fc) 1;
+        }
+        .fade-in {
+            animation: fadeIn 1.2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .slide-in {
+            animation: slideIn 1s ease-in-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-900 text-white">
+    <header class="bg-gray-800 p-4 text-center slide-in">
+        <h1 class="text-3xl font-bold flex items-center justify-center">
+            <i class="fas fa-robot mr-2"></i>
+            <span class="typewriter">DeepSeek AI</span>
+        </h1>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-semibold fade-in">
+            <i class="fas fa-brain mr-2 pb-4"></i>AI-Powered Language Model
+        </h2>
+        <p class="mb-6 fade-in">Interact with DeepSeek AI. Enter a prompt below and receive intelligent responses powered by the DeepSeek model.</p>
+
+        <div class="rounded-lg gradient-border p-6 slide-in bg-gray-800">
+            <div class="relative">
+                <textarea id="user-input" class="w-full p-3 bg-gray-700 text-white rounded mb-4" rows="4"
+                    placeholder="Enter your prompt here..."></textarea>
+                <i class="fas fa-pencil-alt absolute top-2 right-4 text-gray-400"></i>
+            </div>
+
+            <div class="text-center">
+                <button onclick="fetchDeepSeekResponse()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold flex items-center justify-center mx-auto">
+                    <span id="buttonText"><i class="fas fa-magic mr-2"></i>Generate</span>
+                    <span id="spinner" class="hidden"><i class="fas fa-cog fa-spin mr-2"></i>Processing...</span>
+                </button>
+            </div>
+
+            <div id="response" class="mt-6 text-gray-300"></div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 p-4 text-center slide-in">
+        <p>&copy; 2025 DeepSeek AI. Powered by Byron Jacobs, China, Ollama & Apache.</p>
+    </footer>
+
+    <script>
+        document.getElementById("user-input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                fetchDeepSeekResponse();
+            }
+        });
+        async function fetchDeepSeekResponse() {
+            const userInput = document.getElementById("user-input").value;
+            const responseDiv = document.getElementById("response");
+            const buttonText = document.getElementById("buttonText");
+            const spinner = document.getElementById("spinner");
+    
+            if (!userInput) {
+                responseDiv.innerHTML = "<p style='color:red;'>Please enter a message.</p>";
+                return;
+            }
+    
+            responseDiv.innerHTML = "<p>Loading response...</p>";
+            buttonText.classList.add("hidden");
+            spinner.classList.remove("hidden");
+    
+            try {
+                    // #updated [2025-04-18 12:03 AM]
+                    const response = await fetch(`http://${window.location.hostname}:11434/api/generate`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-r1:1.5b",
+                        prompt: userInput
+                    })
+                });
+    
+                if (!response.ok) {
+                    throw new Error("API request failed.");
+                }
+    
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let resultText = "";
+                let buffer = "";
+    
+                responseDiv.innerHTML = "<p class='text-green-400'><strong>DeepSeek:</strong> </p>";
+    
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+    
+                    buffer += decoder.decode(value, { stream: true });
+    
+                    let lines = buffer.split("\n");
+                    buffer = lines.pop();
+    
+                    for (let line of lines) {
+                        try {
+                            const json = JSON.parse(line.trim());
+                            if (json.response) {
+                                resultText += json.response + " ";
+                                responseDiv.innerHTML = `<p class="text-green-400"><strong>DeepSeek:</strong> ${resultText}</p>`;
+                            }
+                        } catch (error) {
+                            console.warn("Skipping invalid JSON:", line);
+                        }
+                    }
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<p style='color:red;'>Error: ${error.message}</p>`;
+            } finally {
+                buttonText.classList.remove("hidden");
+                spinner.classList.add("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
