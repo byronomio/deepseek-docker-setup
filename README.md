@@ -135,7 +135,7 @@ http://<your-server-ip>:8088
 
 **Using the Web Interface**
 
-1. Open the web UI at `http://<your-server-ip>:8088`.
+1. Open the web UI at `http://<your-server-ip>:8088`. (your-server-ip usually is 'localhost', '0.0.0.0' or '127.0.0.1')
 2. Select a model from the dropdown (e.g., `deepseek-v3:37b`).
 3. Click "Pull Model" to start downloading. Monitor progress with:
    - A progress bar (e.g., `50%`).

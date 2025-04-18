@@ -12,11 +12,7 @@ services:
       - deepseek_ollama_models:/root/.ollama/models
     networks:
       - deepseek_network
-    command: >
-      sh -c "host_ip=\$(hostname -i); \
-      echo -e '\n🚀 DeepSeek is running!\n🌐 Access the UI at: http://'\$host_ip':8088\n📡 API endpoint: http://'\$host_ip':11434\n'; \
-      ollama serve & sleep 5 && httpd-foreground"
-
+      
 networks:
   deepseek_network:
     driver: bridge
