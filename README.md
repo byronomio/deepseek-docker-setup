@@ -1,19 +1,55 @@
 
-# 🚀 DeepSeek Docker Setup - Easily Deploy DeepSeek AI with Ollama & Apache
+# 🚀 DeepSeek Local - Easily Deploy DeepSeek AI with Ollama & Apache
 
 ## 🏆 Overview
 
-This repository provides a **one-click Docker setup** for running **DeepSeek AI** with **Ollama and Apache**. With this **Docker Compose** configuration, you can deploy a web interface to select, download, and interact with various DeepSeek models on your local machine or server. Version 1.3 introduces on-demand model downloading via the web interface, persistent model storage, and an enhanced UI with progress tracking, cancellation, and error handling.
+This repository provides a **one-click Docker setup** for running **DeepSeek AI** with **Ollama and Apache**. With this **Docker Compose** configuration, you can deploy a web interface to select, download, and interact with various DeepSeek models on your local machine or server. Version 1.4 introduces on-demand model downloading via the web interface, persistent model storage, and an enhanced UI with progress tracking, cancellation, and error handling.
 
 ---
 
 ## 📦 What's Inside?
 
-- **Docker Compose File (`docker-compose.yml`)** → Automates deployment with model persistence.
-- **Prebuilt Docker Image** → Uses `byron758/woohengine-deepseek:1.3`.
+- **Docker Compose File** → Automates container deployment and persistent model storage.
 - **Apache Web Server** → Serves the DeepSeek AI frontend.
-- **Ollama AI Models** → Supports 17 DeepSeek models, downloaded on-demand via the web interface.
-- **🌍 Interactive Frontend Interface** → A feature-rich web-based UI for model management and AI interaction.
+- **Prebuilt Docker Image** → Uses `byron758/woohengine-deepseek:1.4` with Ollama + Apache.
+- **Interactive Frontend** → Select, download, and interact with AI models in real-time.
+- **Persistent Volume** → Retains downloaded models across container restarts.
+- **Self-Hosted Local API** → Ollama API runs at `http://localhost:11434`.
+
+---
+
+## 🌍 Key Features
+
+### 🎛️ Model Management
+- ✅ **Dropdown Selection**: Choose from 17 DeepSeek models with size info.
+- ✅ **On-Demand Downloads**: Only download models when needed.
+- ✅ **Resume Incomplete Downloads**: Automatically resumes download on page reload and pulling again.
+- ✅ **Cancel Pull**: Abort ongoing downloads with a single click.
+- ✅ **Progress Bar**: Real-time feedback with size, speed, and ETA.
+
+### 🧠 AI Interaction
+- ✅ **Simple Chat UI**: Type a prompt and generate real-time responses.
+- ✅ **Streaming Responses**: Output updates as the model responds.
+- ✅ **ENTER-to-Send**: Press `Enter` to submit, `Shift+Enter` for newline.
+- ✅ **Model-Prefixed Output**: Clearly labeled responses (e.g., `DeepSeek (7B):`).
+
+### 📝 Response Rendering
+- ✅ **Markdown Parsing**: Supports `marked.js` for rich text formatting.
+- ✅ **Syntax Highlighting**: Auto-highlights basic PHP code in responses.
+- ✅ **Safe Formatting**: Renders clean, responsive blocks with code style classes.
+
+### 🔔 UX Feedback & State
+- ✅ **Toast Notifications**: For success, error, warnings, and status updates.
+- ✅ **Download Persistence**: Uses `localStorage` to track download progress and restore previous session.
+- ✅ **Last Model Recall**: Remembers your last selected model across sessions.
+
+### 🧰 Developer-Focused Enhancements
+- ✅ **External JS/CSS**: Modular `scripts.js` and `styles.css` for maintainability.
+- ✅ **Console Logs**: Debug logs like `[monitorPull]`, `[checkModelExists]`, and `[fetchDeepSeekResponse]`.
+- ✅ **Error Resilience**: Auto-retry failed downloads up to 3x (e.g., network stalls, `unexpected EOF`).
+- ✅ **Timeout Protection**: Auto-resets UI after inactivity (30s download timeout, 5s overlay fallback).
+
+---
 
 ### Supported DeepSeek Models
 
@@ -85,6 +121,8 @@ docker logs deepseek-container
 
 The web interface allows you to select, download, and interact with DeepSeek models, with real-time feedback on download progress and AI responses.
 
+---
+
 **Access the UI**
 
 Once the container is running, open:
@@ -93,20 +131,7 @@ Once the container is running, open:
 http://<your-server-ip>:8088
 ```
 
-**Features**
-
-- ✅ **Model Selection**: Choose from 17 DeepSeek models via a dropdown, with estimated sizes displayed (e.g., `DeepSeek R1 (7B, ~14GB)`).
-- ✅ **On-Demand Downloads**: Models are downloaded only when selected and initiated via the "Pull Model" button.
-- ✅ **Progress Tracking**: A progress bar shows download percentage, total size, downloaded amount, and estimated time remaining (ETA).
-- ✅ **Cancel Download**: A "Cancel Pull" button allows stopping downloads, with immediate UI reset.
-- ✅ **Busy State**: A semi-transparent overlay prevents interactions during downloads, ensuring a smooth experience.
-- ✅ **Persistent Downloads**: Download progress resumes on page reload, using `localStorage` to track active downloads.
-- ✅ **Toast Notifications**: Success, error, and warning messages (e.g., "Model pulled successfully!", "Download stalled") enhance user feedback.
-- ✅ **Error Handling**: Robust retry logic for network issues (e.g., `unexpected EOF`, `stalled`), with up to 3 retries and clear error messages.
-- ✅ **Simple Chatbox UI**: Enter prompts and get AI responses in real-time, with responses prefixed by the model name (e.g., `DeepSeek (deepseek-r1:7b):`).
-- ✅ **Live Streaming Responses**: Messages update dynamically without delays.
-- ✅ **Mobile-Friendly Design**: Works on desktops, tablets, and phones.
-- ✅ **Accessibility**: ARIA attributes on progress bar and inputs for screen reader support.
+---
 
 **Using the Web Interface**
 
@@ -124,7 +149,7 @@ http://<your-server-ip>:8088
 
 🔍 **How It Works**
 
-1. Pulls the `byron758/woohengine-deepseek:1.3` image, which includes Apache and Ollama.
+1. Pulls the `byron758/woohengine-deepseek:1.4` image, which includes Apache and Ollama.
 2. Starts the container without downloading a model, exposing the web interface on `http://<your-server-ip>:8088` and the Ollama API on `http://<your-server-ip>:11434`.
 3. Models are downloaded via the web interface using the Ollama `/api/pull` endpoint and stored in a persistent Docker volume (`/root/.ollama/models`).
 4. The web UI provides model management (select, download, cancel) and AI interaction, with real-time feedback and error handling.
@@ -226,6 +251,19 @@ curl -X POST http://<your-server-ip>:11434/api/generate -H "Content-Type: applic
 
 ## 📜 Changelog
 
+### v1.4 (April 2025)
+
+- ✅ **Markdown rendering** with `marked.js` (includes basic `<code>` block styling).
+- ✅ **Syntax highlighting** for PHP (via RegEx injection).
+- ✅ **Enter to send** (Shift+Enter adds newline).
+- ✅ **Last-used model persistence** (`localStorage`).
+- ✅ **Improved JS architecture** (`scripts.js` with modularized logic).
+- ✅ **Externalized styles** → `styles.css` (supports pre/code blocks).
+- ✅ Minor UI polish (favicon + layout tweaks).
+- ✅ Updated structure (`index.html` refactored for maintainability).
+- ✅ Added dynamic IP message on container start using hostname -I
+- ✅ Improved error handling, retry logic, and console debug logs
+
 ### Version 1.3 (April 2025)
 
 - **On-Demand Model Downloading**: Removed automatic model pulling during container startup. Models are now downloaded only when selected via the web interface, reducing initial setup time and disk usage.
@@ -234,7 +272,6 @@ curl -X POST http://<your-server-ip>:11434/api/generate -H "Content-Type: applic
   - Added a dropdown to select from 17 DeepSeek models, with estimated sizes displayed.
   - Implemented a progress bar showing download percentage, total size, downloaded amount, and ETA.
   - Added a "Cancel Pull" button to stop downloads, with immediate UI reset.
-  - Introduced a busy overlay to prevent interactions during downloads.
   - Enabled download persistence, resuming progress on page reload using `localStorage`.
   - Added toast notifications for success, error, and warning events.
   - Improved error handling with up to 3 retries for network issues (e.g., `unexpected EOF`, `stalled`).
